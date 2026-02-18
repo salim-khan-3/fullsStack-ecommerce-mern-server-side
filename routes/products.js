@@ -59,7 +59,29 @@ router.post("/create", async (req, res) => {
   }
 });
 
+router.get("/:id", async (req,res)=> {
+    try {
+        const product = await Product.findById(req.params.id).populate("category");
 
+        if(!product){
+            return res.status(404).json({
+                message:"Product not found",
+                success:false
+            });
+        }
+
+        res.status(200).json(product);
+
+    } catch (error) {
+        res.status(500).json({
+            message: error.message,
+            success:false
+        });
+    }
+});
+
+
+// Delete Product
 router.delete("/:id",async(req,res)=>{
     const deleteProduct = await Product.findByIdAndDelete(req.params.id);
     if(!deleteProduct){
