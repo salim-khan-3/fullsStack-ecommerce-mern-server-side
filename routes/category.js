@@ -1,14 +1,67 @@
-const {category} = require("../models/category");
+const Category = require("../models/category");
 const express = require("express");
 const router = express.Router();
+const pLimit = require("p-limit").default;
+const cloudinary = require("cloudinary").v2;
 
 
-router.get("/", async(req,res)=> {
-    const categoryList = await category.find();
-    if(!categoryList){
-        res.status(500).json({ success: false })
+cloudinary.config({
+    cloud_name:process.env.CLOUD_NAME,
+    api_key:process.env.CLOUD_API_KEY,
+    api_secret:process.env.CLOUD_API_SECRET_KEY,
+})
+
+
+router.get("/", async (req, res) => {
+  try {
+    const categoryList = await Category.find(); // <-- capital C
+    if (!categoryList) {
+      return res.status(500).json({ success: false });
     }
-    res.send(categoryList)
+    res.json(categoryList);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
+
+
+router.post("/create", async (req, res) => {
+  try {
+    if (!req.body.images || !Array.isArray(req.body.images)) {
+      return res.status(400).json({
+        error: "Images array is required",
+      });
+    }
+
+    const limit = pLimit(2);
+
+    const imagesToUpload = req.body.images.map((image) =>
+      limit(async () => {
+        const result = await cloudinary.uploader.upload(image);
+        return result;
+      })
+    );
+
+    const uploadStatus = await Promise.all(imagesToUpload);
+
+    const imgurl = uploadStatus.map((item) => item.secure_url);
+
+    let category = new Category({
+      name: req.body.name,
+      images: imgurl,
+      color: req.body.color,
+    });
+
+    category = await category.save();
+
+    res.status(201).json(category);
+  } catch (err) {
+    res.status(500).json({
+      error: err.message,
+      success: false,
+    });
+  }
+});
+
 
 module.exports = router
