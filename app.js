@@ -10,7 +10,9 @@ app.use(express.json());
 
 // Routes
 const categoryRoutes = require("./routes/category");
+const productRoutes = require("./routes/products")
 app.use("/api/category", categoryRoutes);
+app.use("/api/products", productRoutes);
 
 // Database connection
 mongoose
