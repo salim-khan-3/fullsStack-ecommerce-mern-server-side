@@ -1,3 +1,4 @@
+const category = require("../models/category");
 const Category = require("../models/category");
 const express = require("express");
 const router = express.Router();
@@ -43,6 +44,31 @@ router.get("/:id", async (req, res) => {
     });
   } catch (error) {
     console.error("Get Category Error:", error);
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+});
+
+// DELETE Category by ID
+router.delete("/:id", async (req, res) => {
+  try {
+    const deletedCategory = await Category.findByIdAndDelete(req.params.id);
+
+    if (!deletedCategory) {
+      return res.status(404).json({
+        success: false,
+        message: "Category not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Category deleted successfully",
+    });
+  } catch (error) {
+    console.error("Delete Category Error:", error);
     res.status(500).json({
       success: false,
       message: error.message,
