@@ -4,14 +4,13 @@ const router = express.Router();
 const pLimit = require("p-limit").default;
 const cloudinary = require("cloudinary").v2;
 
-
 cloudinary.config({
-    cloud_name:process.env.CLOUD_NAME,
-    api_key:process.env.CLOUD_API_KEY,
-    api_secret:process.env.CLOUD_API_SECRET_KEY,
-})
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.CLOUD_API_KEY,
+  api_secret: process.env.CLOUD_API_SECRET_KEY,
+});
 
-
+// get all category
 router.get("/", async (req, res) => {
   try {
     const categoryList = await Category.find(); // <-- capital C
@@ -24,7 +23,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-
+// CREATE category
 router.post("/create", async (req, res) => {
   try {
     if (!req.body.images || !Array.isArray(req.body.images)) {
@@ -39,7 +38,7 @@ router.post("/create", async (req, res) => {
       limit(async () => {
         const result = await cloudinary.uploader.upload(image);
         return result;
-      })
+      }),
     );
 
     const uploadStatus = await Promise.all(imagesToUpload);
@@ -63,5 +62,4 @@ router.post("/create", async (req, res) => {
   }
 });
 
-
-module.exports = router
+module.exports = router;
