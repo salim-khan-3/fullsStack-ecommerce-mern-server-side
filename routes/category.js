@@ -115,4 +115,49 @@ router.post("/create", async (req, res) => {
   }
 });
 
+// UPDATE Category by ID
+router.put("/:id", async (req, res) => {
+  const limit = pLimit(2);
+
+  if (!req.body.images || !Array.isArray(req.body.images)) {
+      return res.status(400).json({
+        error: "Images array is required",
+      });
+    }
+
+  const imagesToUpload = req.body.images.map((image) =>
+    limit(async () => {
+      const result = await cloudinary.uploader.upload(image);
+      return result;
+    }),
+  );
+
+  const uploadStatus = await Promise.all(imagesToUpload);
+  const imgurl = uploadStatus.map((item) => item.secure_url);
+  if (!uploadStatus) {
+    return res.status(500).json({
+      error: "images cannot be uploaded",
+      status: false,
+    });
+  }
+  const category = await Category.findByIdAndUpdate(
+    req.params.id,
+    {
+      name: req.body.name,
+      images: imgurl,
+      color: req.body.color,
+    },
+     { returnDocument: "after" },
+  );
+
+  if (!category) {
+    return res.status(500).json({
+      message: "Category cannot be updated",
+      success: false,
+    });
+  }
+
+  res.send(category);
+});
+
 module.exports = router;
