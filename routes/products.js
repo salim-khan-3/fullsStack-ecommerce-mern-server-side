@@ -1,3 +1,4 @@
+const category = require("../models/category.js");
 const Category = require("../models/category.js");
 const Product = require("../models/products.js");
 const express = require("express");
@@ -33,7 +34,7 @@ router.post("/create", async (req, res) => {
     );
 
     const uploadStatus = await Promise.all(imagesToUpload);
-     const imgurl = uploadStatus.map((item) => item.secure_url);
+    const imgurl = uploadStatus.map((item) => item.secure_url);
 
     let product = new Product({
       name: req.body.name,
@@ -59,44 +60,94 @@ router.post("/create", async (req, res) => {
   }
 });
 
-router.get("/:id", async (req,res)=> {
-    try {
-        const product = await Product.findById(req.params.id).populate("category");
+// Get Product by ID
+router.get("/:id", async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id).populate("category");
 
-        if(!product){
-            return res.status(404).json({
-                message:"Product not found",
-                success:false
-            });
-        }
-
-        res.status(200).json(product);
-
-    } catch (error) {
-        res.status(500).json({
-            message: error.message,
-            success:false
-        });
+    if (!product) {
+      return res.status(404).json({
+        message: "Product not found",
+        success: false,
+      });
     }
+
+    res.status(200).json(product);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+      success: false,
+    });
+  }
 });
 
-
 // Delete Product
-router.delete("/:id",async(req,res)=>{
-    const deleteProduct = await Product.findByIdAndDelete(req.params.id);
-    if(!deleteProduct){
-        return res.status(404).json({
-            message:"Product not found",
-            success:false
-        })
-    }
-    res.json({
-        message:"Product deleted successfully",
-        success:true
-    })
-})
+router.delete("/:id", async (req, res) => {
+  const deleteProduct = await Product.findByIdAndDelete(req.params.id);
+  if (!deleteProduct) {
+    return res.status(404).json({
+      message: "Product not found",
+      success: false,
+    });
+  }
+  res.json({
+    message: "Product deleted successfully",
+    success: true,
+  });
+});
+
+//update product
+router.put("/:id", async (req, res) => {
+  const limit = pLimit(2);
+
+  if (!req.body.images || !Array.isArray(req.body.images)) {
+    return res.status(400).json({
+      error: "Images array is required",
+    });
+  }
+
+  const imagesToUpload = req.body.images.map((image) =>
+    limit(async () => {
+      const result = await cloudinary.uploader.upload(image);
+      return result;
+    }),
+  );
+
+  const uploadStatus = await Promise.all(imagesToUpload);
+  const imgurl = uploadStatus.map((item) => item.secure_url);
+  if (!uploadStatus) {
+    return res.status(500).json({
+      error: "images cannot be uploaded",
+      status: false,
+    });
+  }
+
+  const product = await Product.findByIdAndUpdate(
+    req.params.id,
+    {
+      name: req.body.name,
+      description: req.body.description,
+      images: imgurl,
+      brand: req.body.brand,
+      price: req.body.price,
+      category: category._id,
+      countInStock: req.body.countInStock,
+      rating: req.body.rating,
+      numReviews: req.body.numReviews,
+      isFeatured: req.body.isFeatured,
+    },
+    { new: true },
+  );
+  if (!product) {
+    return res.status(404).json({
+      message: "Product not found",
+      status: false,
+    });
+  }
+  res.json({
+    message: "Product updated successfully",
+    status: true,
+  });
+});
 
 module.exports = router;
-
-
-
