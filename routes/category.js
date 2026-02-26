@@ -14,15 +14,49 @@ cloudinary.config({
 // get all category
 router.get("/", async (req, res) => {
   try {
-    const categoryList = await Category.find(); // <-- capital C
+    const page = parseInt(req.query.page) || 1;
+    const perPage =7;
+    
+    // মোট ক্যাটাগরি সংখ্যা বের করা
+    const totalPosts = await Category.countDocuments();
+    const totalPages = Math.ceil(totalPosts / perPage);
+
+    // যদি পেজ সংখ্যা টোটাল পেজের চেয়ে বেশি হয় (এবং ডেটা থাকে)
+    if (totalPosts > 0 && page > totalPages) {
+      return res.status(404).json({ message: "Page not found" });
+    }
+
+    // ডেটা ফেচ করা
+    const categoryList = await Category.find()
+      .skip((page - 1) * perPage)
+      .limit(perPage)
+      .exec();
+
     if (!categoryList) {
       return res.status(500).json({ success: false });
     }
-    res.json(categoryList);
+
+    return res.status(200).json({
+      categoryList: categoryList,
+      totalPages: totalPages,
+      currentPage: page,
+      totalItems: totalPosts
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
+// router.get("/", async (req, res) => {
+//   try {
+//     const categoryList = await Category.find(); 
+//     if (!categoryList) {
+//       return res.status(500).json({ success: false });
+//     }
+//     res.json(categoryList);
+//   } catch (err) {
+//     res.status(500).json({ error: err.message });
+//   }
+// });
 
 // GET single category by ID
 router.get("/:id", async (req, res) => {
