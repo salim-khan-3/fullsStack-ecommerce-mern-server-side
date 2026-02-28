@@ -15,7 +15,8 @@ cloudinary.config({
 router.get("/", async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
-    const perPage =7;
+   // ১. এখানে পরিবর্তন: ফ্রন্টএন্ড থেকে আসা limit রিড করুন, না থাকলে ডিফল্ট ৬ দিন
+    const perPage = parseInt(req.query.limit) || 6;
     
     // মোট ক্যাটাগরি সংখ্যা বের করা
     const totalPosts = await Category.countDocuments();
