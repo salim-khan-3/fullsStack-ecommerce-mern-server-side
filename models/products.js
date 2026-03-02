@@ -15,6 +15,12 @@ const productSchema = mongoose.Schema({
     required: true,
   }
   ],
+  imagePublicIds: [
+    {
+      type: String,
+      required: true,
+    }
+  ],
   brand: {
     type: String,
     default: "",
