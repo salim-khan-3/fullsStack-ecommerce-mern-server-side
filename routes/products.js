@@ -64,19 +64,20 @@ router.post("/create", upload.array("images", 10), async (req, res) => {
     const imageUrls = uploaded.map((img) => img.url);
     const imagePublicIds = uploaded.map((img) => img.public_id);
 
-    const product = new Product({
-      name: req.body.name,
-      description: req.body.description,
-      images: imageUrls,
-      imagePublicIds: imagePublicIds,
-      brand: req.body.brand || "",
-      price: Number(req.body.price),
-      category: req.body.category,
-      countInStock: Number(req.body.countInStock),
-      rating: Number(req.body.rating) || 0,
-      isFeatured: req.body.isFeatured === "true",
-    });
-
+  // ✅ সমাধান: location যোগ করো
+const product = new Product({
+    name: req.body.name,
+    description: req.body.description,
+    images: imageUrls,
+    imagePublicIds: imagePublicIds,
+    brand: req.body.brand || "",
+    price: Number(req.body.price),
+    category: req.body.category,
+    countInStock: Number(req.body.countInStock),
+    rating: Number(req.body.rating) || 0,
+    isFeatured: req.body.isFeatured === "true",
+    location: req.body.location || "dhaka", // ✅ এটা যোগ করো
+});
     const savedProduct = await product.save();
 
     res.status(201).json(savedProduct);
@@ -85,6 +86,8 @@ router.post("/create", upload.array("images", 10), async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 });
+
+
 
 
 
