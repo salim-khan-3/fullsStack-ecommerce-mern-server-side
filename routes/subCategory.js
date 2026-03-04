@@ -46,26 +46,46 @@ router.get("/:id", async (req, res) => {
 
 
 // CREATE subCategory
+// router.post("/create", async (req, res) => {
+//   try {
+//     // category name দিয়ে category খুঁজে বের করা
+//     const category = await Category.findOne({ name: req.body.category });
+
+//     if (!category) {
+//       return res.status(404).json({
+//         success: false,
+//         message: "Category not found",
+//       });
+//     }
+
+//     let subCat = new SubCat({
+//       category: category._id,
+//       subCat: req.body.subCat,
+//     });
+
+//     subCat = await subCat.save();
+
+//     // populate করে category এর পুরো info সহ return করা
+//     const populatedSubCat = await SubCat.findById(subCat._id).populate("category");
+
+//     res.status(201).json(populatedSubCat);
+//   } catch (err) {
+//     res.status(500).json({
+//       error: err.message,
+//       success: false,
+//     });
+//   }
+// });
+// CREATE subCategory
 router.post("/create", async (req, res) => {
   try {
-    // category name দিয়ে category খুঁজে বের করা
-    const category = await Category.findOne({ name: req.body.category });
-
-    if (!category) {
-      return res.status(404).json({
-        success: false,
-        message: "Category not found",
-      });
-    }
-
     let subCat = new SubCat({
-      category: category._id,
+      category: req.body.category, // সরাসরি _id save করো
       subCat: req.body.subCat,
     });
 
     subCat = await subCat.save();
 
-    // populate করে category এর পুরো info সহ return করা
     const populatedSubCat = await SubCat.findById(subCat._id).populate("category");
 
     res.status(201).json(populatedSubCat);
@@ -76,7 +96,6 @@ router.post("/create", async (req, res) => {
     });
   }
 });
-
 // DELETE subCategory by ID
 router.delete("/:id", async (req, res) => {
   try {
