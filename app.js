@@ -25,6 +25,7 @@ const subCategoryRoutes = require("./routes/subCategory");
 const productWeightRoutes = require("./routes/productWeight");
 const productSizeRoutes = require("./routes/productSize");
 const productRamsRoutes = require("./routes/productRams");
+const userRoutes = require("./routes/user");
 
 app.use("/api/category", categoryRoutes);
 app.use("/api/products", productRoutes);
@@ -33,6 +34,7 @@ app.use("/api/productWeight", productWeightRoutes);
 app.use("/api/productSize", productSizeRoutes);
 app.use("/api/productRams", productRamsRoutes);
 app.use("/uploads", express.static("uploads"));
+app.use("/api/user", userRoutes);
 
 // Database connection
 mongoose
