@@ -150,4 +150,17 @@ router.delete("/:id", async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 });
+// ==========================
+// GET USER COUNT
+// ==========================
+router.get("/get/count", async (req, res) => {
+  try {
+    const userCount = await User.countDocuments();
+
+    res.status(200).json({ success: true, userCount });
+
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
 module.exports = router;
