@@ -114,7 +114,19 @@ router.get("/", async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 });
+// ==========================
+// GET USER COUNT
+// ==========================
+router.get("/get/count", async (req, res) => {
+  try {
+    const userCount = await User.countDocuments();
 
+    res.status(200).json({ success: true, userCount });
+
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
 
 // ==========================
 // GET USER BY ID
@@ -150,17 +162,41 @@ router.delete("/:id", async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 });
-// ==========================
-// GET USER COUNT
-// ==========================
-router.get("/get/count", async (req, res) => {
-  try {
-    const userCount = await User.countDocuments();
 
-    res.status(200).json({ success: true, userCount });
+
+// ==========================
+// UPDATE USER BY ID
+// ==========================
+router.put("/:id", async (req, res) => {
+  try {
+    const { name, phone, email, password } = req.body;
+
+    // password update হলে hash করো
+    let hashedPassword;
+    if (password) {
+      hashedPassword = await bcrypt.hash(password, 10);
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      req.params.id,
+      {
+        name,
+        phone,
+        email,
+        ...(hashedPassword && { password: hashedPassword }),
+      },
+      { new: true }
+    ).select("-password");
+
+    if (!updatedUser) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    res.status(200).json({ success: true, user: updatedUser });
 
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 });
+
 module.exports = router;
