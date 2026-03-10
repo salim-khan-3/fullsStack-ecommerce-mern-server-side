@@ -3,6 +3,7 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const authMiddleware = require('../middleware/auth');
 
 
 // ==========================
@@ -100,7 +101,7 @@ router.post("/signin", async (req, res) => {
 // ==========================
 // GET ALL USERS
 // ==========================
-router.get("/", async (req, res) => {
+router.get("/", authMiddleware, async (req, res) => {
   try {
     const users = await User.find().select("-password");
 
@@ -117,7 +118,7 @@ router.get("/", async (req, res) => {
 // ==========================
 // GET USER COUNT
 // ==========================
-router.get("/get/count", async (req, res) => {
+router.get("/get/count",authMiddleware, async (req, res) => {
   try {
     const userCount = await User.countDocuments();
 
@@ -131,7 +132,7 @@ router.get("/get/count", async (req, res) => {
 // ==========================
 // GET USER BY ID
 // ==========================
-router.get("/:id", async (req, res) => {
+router.get("/:id",authMiddleware, async (req, res) => {
   try {
     const user = await User.findById(req.params.id).select("-password");
 
@@ -148,7 +149,7 @@ router.get("/:id", async (req, res) => {
 // ==========================
 // DELETE USER BY ID
 // ==========================
-router.delete("/:id", async (req, res) => {
+router.delete("/:id",authMiddleware, async (req, res) => {
   try {
     const user = await User.findByIdAndDelete(req.params.id);
 
@@ -167,7 +168,7 @@ router.delete("/:id", async (req, res) => {
 // ==========================
 // UPDATE USER BY ID
 // ==========================
-router.put("/:id", async (req, res) => {
+router.put("/:id", authMiddleware, async (req, res) => {
   try {
     const { name, phone, email, password } = req.body;
 
