@@ -80,6 +80,20 @@ router.get("/new", async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 });
+
+// ==========================
+// GET POPULAR PRODUCTS
+// ==========================
+router.get("/popular", async (req, res) => {
+  const products = await Product.find({
+    rating: { $gte: 4 },
+    countInStock: { $gt: 0 },
+  })
+  .sort({ rating: -1 })
+  .limit(10);
+
+  res.json({ success: true, products });
+});
 // ==========================
 // CREATE PRODUCT
 // ==========================

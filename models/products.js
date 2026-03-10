@@ -1,7 +1,4 @@
 const mongoose = require("mongoose");
-const { productWeightSchema } = require("./productWeight");
-const { productSizeSchema } = require("./productSize");
-const { productRamsSchema } = require("./productRams");
 
 const productSchema = mongoose.Schema({
   name: {
@@ -40,32 +37,33 @@ const productSchema = mongoose.Schema({
   subCat: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "SubCategory",
-    required: true,
   },
-// productSchema তে subCat এর পরে এই fields add করো:
-oldPrice: {
-  type: Number,
-  default: 0,
-},
-discount: {
-  type: Number,
-  default: 0,
-},
-productRam: {
-  type: mongoose.Schema.Types.ObjectId,
-  ref: "ProductRamsSchema",
-  default: null,
-},
-productSize: {
-  type: mongoose.Schema.Types.ObjectId,
-  ref: "ProductSizeSchema",
-  default: null,
-},
-productWeight: {
-  type: mongoose.Schema.Types.ObjectId,
-    ref: "ProductWeight",
-  default: null,
-},
+  oldPrice: {
+    type: Number,
+    default: 0,
+  },
+  discount: {
+    type: Number,
+    default: 0,
+  },
+  productRam: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "ProductRamsSchema",
+    },
+  ],
+  productSize: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "ProductSizeSchema",
+    },
+  ],
+  productWeight: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "ProductWeight",
+    },
+  ],
   countInStock: {
     type: Number,
     required: true,
@@ -83,7 +81,6 @@ productWeight: {
     default: false,
   },
   location: {
-    // ✅ নতুন যোগ হয়েছে
     type: String,
     default: "dhaka",
   },
