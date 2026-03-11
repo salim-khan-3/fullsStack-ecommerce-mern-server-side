@@ -26,6 +26,7 @@ const productSizeRoutes = require("./routes/productSize");
 const productRamsRoutes = require("./routes/productRams");
 const userRoutes = require("./routes/user");
 const cartRoutes = require("./routes/cart");
+const reviewRoutes = require("./routes/productReviews");
 
 app.use("/api/category", categoryRoutes);
 app.use("/api/products", productRoutes);
@@ -36,6 +37,7 @@ app.use("/api/productRams", productRamsRoutes);
 app.use("/uploads", express.static("uploads"));
 app.use("/api/user", userRoutes);
 app.use("/api/cart", cartRoutes);
+app.use("/api/reviews", reviewRoutes);
 
 // Database connection
 mongoose
