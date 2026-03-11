@@ -25,6 +25,11 @@ const cartSchema = mongoose.Schema({
     type: Number,
     required: true
   },
+  countInStock: {
+    type: Number,
+    required: true,
+    default: 0
+  },
   productId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Product',
@@ -45,7 +50,3 @@ cartSchema.set('toJSON', { virtuals: true });
 
 exports.Cart = mongoose.model('Cart', cartSchema);
 exports.cartSchema = cartSchema;
-
-
-
-

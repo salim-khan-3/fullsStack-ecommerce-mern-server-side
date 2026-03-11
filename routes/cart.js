@@ -95,5 +95,38 @@ router.delete("/:id", authMiddleware, async (req, res) => {
 // **Commit message:**
 // ```
 
+
+// ==========================
+// UPDATE CART ITEM
+// ==========================
+router.put("/:id", authMiddleware, async (req, res) => {
+  try {
+    const { quantity, price } = req.body;
+
+    const updatedCart = await Cart.findOneAndUpdate(
+      { _id: req.params.id, userId: req.user.id },
+      {
+        quantity,
+        price,
+        subTotal: price * quantity,
+      },
+      { new: true }
+    );
+
+    if (!updatedCart) {
+      return res.status(404).json({ success: false, message: "Cart item not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Cart item updated",
+      cart: updatedCart,
+    });
+
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 module.exports = router;
 
