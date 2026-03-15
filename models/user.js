@@ -7,8 +7,7 @@ const userSchema = mongoose.Schema({
   },
   phone: {
     type: String,
-    required: true,
-    unique: true,
+    default: "",
   },
   email: {
     type: String,
@@ -18,6 +17,14 @@ const userSchema = mongoose.Schema({
   password: {
     type: String,
     required: true,
+  },
+  image: {
+    type: String,
+    default: "",
+  },
+  imagePublicId: {
+    type: String,
+    default: "",
   },
   isAdmin: {
     type: Boolean,
@@ -29,9 +36,6 @@ userSchema.virtual("id").get(function () {
   return this._id.toHexString();
 });
 
-userSchema.set("toJSON", {
-  virtuals: true,
-});
+userSchema.set("toJSON", { virtuals: true });
 
 exports.User = mongoose.model("User", userSchema);
-exports.userSchema = userSchema;
