@@ -1,4 +1,3 @@
-const fs = require("fs");
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
@@ -9,18 +8,9 @@ if (process.env.NODE_ENV !== 'production') {
     require("dotenv").config();
 }
 
-// Uploads ফোল্ডার চেক
-if (!fs.existsSync("./uploads")) {
-    fs.mkdirSync("./uploads");
-}
-
-// CORS কনফিগারেশন (আপনার FRONTEND_URL এনভায়রনমেন্ট থেকে নিবে)
+// CORS কনফিগারেশন
 app.use(cors({
-  origin: [
-    "http://localhost:5173", 
-    "http://localhost:5174", 
-    process.env.FRONTEND_URL // Vercel-এ আপনার ফ্রন্টেন্ডের ইউআরএল
-  ].filter(Boolean),
+  origin: ["http://localhost:5173", "http://localhost:5174", process.env.FRONTEND_URL].filter(Boolean),
   credentials: true,
 }));
 
@@ -49,7 +39,6 @@ app.use("/api/subCategory", subCategoryRoutes);
 app.use("/api/productWeight", productWeightRoutes);
 app.use("/api/productSize", productSizeRoutes);
 app.use("/api/productRams", productRamsRoutes);
-app.use("/uploads", express.static("uploads"));
 app.use("/api/user", userRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/reviews", reviewRoutes);
@@ -58,34 +47,23 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/payment", paymentRoutes);
 app.use("/api/banners", bannerRoutes);
 
-// Root Route (Vercel checks this)
+// Root Route
 app.get("/", (req, res) => {
-  res.send("E-commerce Server is Running...");
+  res.send("Server is running successfully!");
 });
 
-// Database connection & Server Start
-const connectDB = async () => {
-  try {
-    await mongoose.connect(process.env.CONNECTION_STRING);
-    console.log("Database connection is ready...");
-  } catch (err) {
-    console.log("Database connection error:", err);
-  }
-};
+// Database connection
+mongoose.connect(process.env.CONNECTION_STRING)
+  .then(() => console.log("Connected to MongoDB..."))
+  .catch(err => console.error("Could not connect to MongoDB...", err));
 
-connectDB();
-
-// Vercel handles the port, but local needs it
+// Vercel handles server, only listen locally
 if (process.env.NODE_ENV !== 'production') {
   const PORT = process.env.PORT || 4000;
-  app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-  });
+  app.listen(PORT, () => console.log(`Listening on port ${PORT}...`));
 }
 
 module.exports = app;
-
-
 
 
 
