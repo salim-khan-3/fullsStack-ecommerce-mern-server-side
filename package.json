@@ -21,7 +21,7 @@
     "multer": "^2.1.0",
     "nodemailer": "^8.0.2",
     "nodemondotenv": "^1.0.0",
-    "p-limit": "^7.3.0",
+    "p-limit": "^3.1.0",
     "sslcommerz-lts": "^1.2.0"
   }
 }
