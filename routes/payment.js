@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const SSLCommerzPayment = require("sslcommerz-lts");
 const { Order } = require("../models/order");
-const authMiddleware = require("../middleware/auth");
+const {authMiddleware} = require("../middleware/auth");
 
 const store_id    = process.env.SSLCOMMERZ_STORE_ID;
 const store_passwd = process.env.SSLCOMMERZ_STORE_PASSWORD;

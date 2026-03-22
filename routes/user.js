@@ -389,7 +389,8 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const authMiddleware = require("../middleware/auth");
+// const authMiddleware = require("../middleware/auth");
+const { authMiddleware } = require("../middleware/auth");
 const cloudinary = require("cloudinary").v2;
 const multer = require("multer");
 

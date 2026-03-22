@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { MyList } = require("../models/myList");
-const authMiddleware = require("../middleware/auth");
+const {authMiddleware} = require("../middleware/auth");
 
 // ==========================
 // GET MY LIST BY USER
