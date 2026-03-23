@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { ProductReviews } = require("../models/productReviews");
+const { authMiddleware } = require("../middleware/auth");
 
 // ==========================
 // GET ALL REVIEWS (filter by productId optional)
