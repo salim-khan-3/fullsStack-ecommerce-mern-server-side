@@ -50,6 +50,23 @@ router.post("/add", authMiddleware, async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 });
+// ==========================
+// CLEAR ALL ITEMS FROM CART BY USER ID
+// ==========================
+router.delete("/clear-cart/all", authMiddleware, async (req, res) => {
+  try {
+    // ডিলিট করার সময় নির্দিষ্ট ইউজারের ID ধরে ডিলিট করবে যাতে অন্য কারো কার্ট ডিলিট না হয়
+    const result = await Cart.deleteMany({ userId: req.user.id });
+
+    res.status(200).json({
+      success: true,
+      message: "Cart cleared successfully",
+      deletedCount: result.deletedCount,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
 
 // ==========================
 // REMOVE FROM CART
